@@ -11,3 +11,5 @@ obj/
 
 # Ignore other system files
 *.log
+
+appsettings.json
