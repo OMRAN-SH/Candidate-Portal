@@ -1,0 +1,13 @@
+# Ignore Visual Studio files
+.vs/
+*.user
+*.suo
+*.vcxproj.user
+*.opendb
+
+# Ignore build artifacts
+bin/
+obj/
+
+# Ignore other system files
+*.log
