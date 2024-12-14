@@ -1,5 +1,8 @@
 var builder = WebApplication.CreateBuilder(args);
 
+
+builder.WebHost.UseUrls("http://*:80");
+
 // Add services to the container.
 
 builder.Services.AddControllers();
@@ -7,16 +10,17 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
 
-app.UseHttpsRedirection();
+app.UseSwagger();
+app.UseSwaggerUI();
+
+// Commented out for the Task's purpose as there's no SSL license
+
+// app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
