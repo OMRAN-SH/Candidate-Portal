@@ -67,5 +67,80 @@ namespace CandidatePortal.Controllers
 
             return Ok(new { message = "Candidate registered successfully.", candidate.Id });
         }
+
+
+        [HttpGet("list")]
+        public IActionResult ListCandidates([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
+        {
+            // Check for admin access
+            if (!Request.Headers.TryGetValue("X-ADMIN", out var isAdmin) || isAdmin != "1")
+            {
+                return Unauthorized(new { message = "Admin access required." });
+            }
+
+            // Get candidates from the database
+            var candidates = _context.Candidates
+                .OrderByDescending(c => c.Id) // Assuming Id indicates registration order
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .Select(c => new
+                {
+                    c.Id,
+                    c.FullName,
+                    c.DateOfBirth,
+                    c.YearsOfExperience,
+                    c.Department
+                })
+                .ToList();
+
+            return Ok(new
+            {
+                pageNumber,
+                pageSize,
+                totalCandidates = _context.Candidates.Count(),
+                candidates
+            });
+        }
+
+        [HttpGet("download-resume/{id}")]
+        public IActionResult DownloadResume(int id)
+        {
+            // Check for admin access
+            if (!Request.Headers.TryGetValue("X-ADMIN", out var isAdmin) || isAdmin != "1")
+            {
+                return Unauthorized(new { message = "Admin access required." });
+            }
+
+            // Find the candidate by ID
+            var candidate = _context.Candidates.FirstOrDefault(c => c.Id == id);
+            if (candidate == null)
+            {
+                return NotFound(new { message = "Candidate not found." });
+            }
+
+            // Verify if the resume file exists
+            if (string.IsNullOrEmpty(candidate.ResumePath) || !System.IO.File.Exists(candidate.ResumePath))
+            {
+                return NotFound(new { message = "Resume file not found." });
+            }
+
+            // Return the file as a download
+            var fileBytes = System.IO.File.ReadAllBytes(candidate.ResumePath);
+            var fileName = Path.GetFileName(candidate.ResumePath);
+            var contentType = "application/octet-stream"; // Default content type
+            if (Path.GetExtension(candidate.ResumePath).Equals(".pdf", StringComparison.OrdinalIgnoreCase))
+            {
+                contentType = "application/pdf";
+            }
+            else if (Path.GetExtension(candidate.ResumePath).Equals(".docx", StringComparison.OrdinalIgnoreCase))
+            {
+                contentType = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+            }
+
+            return File(fileBytes, contentType, fileName);
+        }
+
     }
+
+
 }
