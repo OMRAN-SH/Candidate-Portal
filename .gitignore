@@ -13,3 +13,7 @@ obj/
 *.log
 
 appsettings.json
+
+# uploads
+
+wwwroot/
