@@ -89,7 +89,7 @@ namespace CandidatePortal.Controllers
                     c.FullName,
                     c.DateOfBirth,
                     c.YearsOfExperience,
-                    c.Department
+                    Department = c.Department.ToString()
                 })
                 .ToList();
 
@@ -139,6 +139,27 @@ namespace CandidatePortal.Controllers
 
             return File(fileBytes, contentType, fileName);
         }
+
+        [HttpGet("statistics")]
+        public IActionResult GetStatistics()
+        {
+            var totalCandidates = _context.Candidates.Count();
+            var candidatesByDepartment = _context.Candidates
+                .GroupBy(c => c.Department)
+                .Select(g => new
+                {
+                    Department = g.Key.ToString(),
+                    Count = g.Count()
+                })
+                .ToList();
+
+            return Ok(new
+            {
+                TotalCandidates = totalCandidates,
+                CandidatesByDepartment = candidatesByDepartment
+            });
+        }
+
 
     }
 

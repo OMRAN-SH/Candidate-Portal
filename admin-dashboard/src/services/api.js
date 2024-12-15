@@ -19,3 +19,8 @@ export const downloadResume = async (id) => {
   });
   return response;
 };
+
+export const getStatistics = async () => {
+  const response = await api.get('/statistics');
+  return response.data;
+};

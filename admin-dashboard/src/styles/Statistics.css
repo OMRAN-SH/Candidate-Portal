@@ -1,0 +1,28 @@
+.container {
+    max-width: 800px;
+    margin: auto;
+  }
+  
+  .stats-box {
+    margin-top: 20px;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    text-align: center;
+  }
+  
+  .stats-box h2 {
+    color: #333;
+  }
+  
+  .stats-box ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .stats-box li {
+    font-size: 1.2rem;
+    margin: 10px 0;
+  }
+  
